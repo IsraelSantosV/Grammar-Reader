@@ -10,8 +10,6 @@ public class Main {
     public static void main(String[] args) {
         String input = FileResourceUtils.getInstance().getFileFromResourceAsString(INPUT_FILE);
         Syntax newSyntax = new Syntax(input);
-        newSyntax.printSyntax();
-        newSyntax.printValues(false);
 
         ParserLL1 parserLL1 = new ParserLL1(newSyntax);
         parserLL1.createTable();

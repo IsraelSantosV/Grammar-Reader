@@ -262,6 +262,17 @@ public class Syntax {
         return allOccurrences;
     }
 
+    public Set<Character> getAllSymbolsOf(boolean terminals, Set<Character> list){
+        Set<Character> resultValues = new HashSet<>();
+        for (Character character : list) {
+            if(Character.isUpperCase(character) && !terminals || !Character.isUpperCase(character) && terminals){
+                resultValues.add(character);
+            }
+        }
+
+        return resultValues;
+    }
+
     public Set<Symbol> getAllSymbolsOf(boolean terminals){
         Set<Symbol> resultValues = new HashSet<>();
         for (Map.Entry<Symbol, List<OutputRule>> entry : m_Rules.entrySet()) {
@@ -271,7 +282,7 @@ public class Syntax {
             else {
                 for (OutputRule outputRule : entry.getValue()) {
                     for (Symbol symbol : outputRule.Output) {
-                        if(symbol.IsTerminal){
+                        if(symbol.IsTerminal && !containsTokenInSet(resultValues, symbol.Token)){
                             resultValues.add(symbol);
                         }
                     }
@@ -280,6 +291,14 @@ public class Syntax {
         }
 
         return resultValues;
+    }
+
+    public boolean containsTokenInSet(Set<Symbol> symbols, char token){
+        for (Symbol symbol : symbols) {
+            if(symbol.Token == token) return true;
+        }
+
+        return false;
     }
 
 }

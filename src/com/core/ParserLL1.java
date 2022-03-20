@@ -79,11 +79,12 @@ public class ParserLL1 extends Parser {
                 String production = currentNotTerminal.Token + " -> " + String.valueOf(outputRule.convertOutputInTokens());
 
                 Syntax.Symbol firstProductionSymbol = outputRule.Output.get(0);
-                Set<Character> firstSetOfSymbol = getFirstSetOf(firstProductionSymbol);
+                Set<Character> firstSetOfSymbol = getFirstSetOf(firstProductionSymbol.Token);
 
-                if(firstSetOfSymbol.contains(firstProductionSymbol.Token)){
-                    Set<Character> followSetOfRoot = getFollowSetOf(currentNotTerminal);
-                    setTableValueWithSet(currentNotTerminal.Token, followSetOfRoot, production);
+                if(firstSetOfSymbol.contains(m_Syntax.getVoidSymbol())){
+                    Set<Character> followSetOfRoot = getFollowSetOf(currentNotTerminal.Token);
+                    Set<Character> terminalsInRootFollowSet = m_Syntax.getAllSymbolsOf(true, followSetOfRoot);
+                    setTableValueWithSet(currentNotTerminal.Token, terminalsInRootFollowSet, production);
                 }
                 else {
                     setTableValueWithSet(currentNotTerminal.Token, firstSetOfSymbol, production);
@@ -91,6 +92,7 @@ public class ParserLL1 extends Parser {
             }
         }
 
+        System.out.println("Table is generated for " + getSaveFileName());
         saveTable();
     }
 
@@ -122,6 +124,7 @@ public class ParserLL1 extends Parser {
 
         try {
             FileResourceUtils.writeMatrixCSV(headers, lineValues, getSaveFileName());
+            System.out.println("Table saved in: /" + getSaveFileName() + ".csv");
         } catch (IOException e) {
             System.out.println("Error or generate CSV: " + e.getMessage());
         }

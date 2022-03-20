@@ -7,8 +7,8 @@ public abstract class Parser {
     protected final int INVALID_INDEX = -1;
     protected Syntax m_Syntax;
 
-    private Map<Syntax.Symbol, Set<Character>> m_FirstSets;
-    private Map<Syntax.Symbol, Set<Character>> m_FollowSets;
+    private Map<Character, Set<Character>> m_FirstSets;
+    private Map<Character, Set<Character>> m_FollowSets;
 
     public Parser(Syntax syntax){
         m_Syntax = syntax;
@@ -31,24 +31,24 @@ public abstract class Parser {
     public abstract void saveTable();
     protected abstract String getSaveFileName();
 
-    public Set<Character> getFirstSetOf(Syntax.Symbol symbol){
-        if(m_FirstSets.get(symbol) == null){
-            return new HashSet<>();
+    public Set<Character> getFirstSetOf(char token){
+        if(m_FirstSets.get(token) == null){
+            return null;
         }
 
-        return new HashSet<>(m_FirstSets.get(symbol));
+        return new HashSet<>(m_FirstSets.get(token));
     }
 
-    public Set<Character> getFollowSetOf(Syntax.Symbol symbol){
-        if(m_FollowSets.get(symbol) == null){
-            return new HashSet<>();
+    public Set<Character> getFollowSetOf(char token){
+        if(m_FollowSets.get(token) == null){
+            return null;
         }
 
-        return new HashSet<>(m_FollowSets.get(symbol));
+        return new HashSet<>(m_FollowSets.get(token));
     }
 
     protected void internalSetFirstSetOf(Syntax.Symbol symbol){
-        if(getFirstSetOf(symbol).size() > 0) return;
+        if(getFirstSetOf(symbol.Token) != null) return;
         Set<Character> firstSet = new HashSet<>();
 
         //If is a terminal, then first(a)={a}
@@ -65,11 +65,11 @@ public abstract class Parser {
                     firstSet.add(firstSymbol.Token);
                 }
                 else if (firstSymbol.Token != symbol.Token) {
-                    if(getFirstSetOf(firstSymbol).size() <= 0){
+                    if(getFirstSetOf(firstSymbol.Token) == null){
                         internalSetFirstSetOf(firstSymbol);
                     }
 
-                    Set<Character> firstOfCurrentSymbol = getFirstSetOf(firstSymbol);
+                    Set<Character> firstOfCurrentSymbol = getFirstSetOf(firstSymbol.Token);
 
                     // First(A) = first(Y1)
                     firstSet.addAll(firstOfCurrentSymbol);
@@ -82,11 +82,11 @@ public abstract class Parser {
                         //First(Y2)
                         Syntax.Symbol nextSymbol = m_Syntax.getNextSymbolOfToken(symbol.Token, i, firstSymbol.Token);
                         if (nextSymbol != null) {
-                            if(getFirstSetOf(nextSymbol).size() <= 0){
+                            if(getFirstSetOf(nextSymbol.Token) == null){
                                 internalSetFirstSetOf(nextSymbol);
                             }
 
-                            Set<Character> firstsOfNextSymbol = getFirstSetOf(nextSymbol);
+                            Set<Character> firstsOfNextSymbol = getFirstSetOf(nextSymbol.Token);
                             firstSet.addAll(firstsOfNextSymbol);
                         }
                     }
@@ -94,15 +94,16 @@ public abstract class Parser {
             }
         }
 
-        m_FirstSets.put(symbol, firstSet);
+        m_FirstSets.put(symbol.Token, firstSet);
     }
 
     protected void internalSetFollowSetOf(Syntax.Symbol symbol){
-        if(getFollowSetOf(symbol).size() > 0) return;
+        if(getFollowSetOf(symbol.Token) != null) return;
 
         Set<Character> followSet = new HashSet<>();
         if(symbol.Token == m_Syntax.getInitialToken()){
             followSet.add(m_Syntax.getSpecialRuleCharacter());
+            m_FollowSets.put(symbol.Token, followSet);
         }
 
         Map<Character, Syntax.OutputRule> allOccurrencesOfSymbol = m_Syntax.getAllRulesOccurrencesOf(symbol.Token);
@@ -119,38 +120,40 @@ public abstract class Parser {
                     if(i < outputRule.Output.size() - 1){
                         //Exist next symbol
                         Syntax.Symbol nextSymbol = outputRule.Output.get(i+1);
-                        Set<Character> firstOfNextSymbol = getFirstSetOf(nextSymbol);
+                        if(getFirstSetOf(nextSymbol.Token) == null){
+                            internalSetFirstSetOf(nextSymbol);
+                        }
+
+                        Set<Character> firstOfNextSymbol = getFirstSetOf(nextSymbol.Token);
 
                         followSet.addAll(firstOfNextSymbol);
                         followSet.remove(m_Syntax.getVoidSymbol());
+                        m_FollowSets.put(symbol.Token, followSet);
 
                         //Followers(Root)
                         if(firstOfNextSymbol.contains(m_Syntax.getVoidSymbol())){
-                            Syntax.Symbol rootSymbol = new Syntax.Symbol(currentKey, false);
-                            if(getFollowSetOf(rootSymbol).size() <= 0){
-                                internalSetFollowSetOf(rootSymbol);
-                            }
-
-                            Set<Character> followersOfRoot = getFollowSetOf(rootSymbol);
-                            followSet.addAll(followersOfRoot);
+                            setFollowOfRootSymbol(symbol, followSet, currentKey);
                         }
                     }
                     //If a-> αB is a production, then everything in
                     //followers (a) is in followers (B).
                     else {
-                        Syntax.Symbol rootSymbol = new Syntax.Symbol(currentKey, false);
-                        //if(getFollowSetOf(rootSymbol).size() <= 0){
-                            //internalSetFollowSetOf(rootSymbol);
-                        //}
-
-                        Set<Character> followersOfRootSymbol = getFollowSetOf(rootSymbol);
-                        followSet.addAll(followersOfRootSymbol);
+                        setFollowOfRootSymbol(symbol, followSet, currentKey);
                     }
                 }
             }
         }
+    }
 
-        m_FollowSets.put(symbol, followSet);
+    protected void setFollowOfRootSymbol(Syntax.Symbol symbol, Set<Character> followSet, Character currentKey) {
+        Syntax.Symbol rootSymbol = new Syntax.Symbol(currentKey, false);
+        if(getFollowSetOf(rootSymbol.Token) == null){
+            internalSetFollowSetOf(rootSymbol);
+        }
+
+        Set<Character> followersOfRoot = getFollowSetOf(rootSymbol.Token);
+        followSet.addAll(followersOfRoot);
+        m_FollowSets.put(symbol.Token, followSet);
     }
 
 }
