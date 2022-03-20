@@ -1,0 +1,7 @@
+{
+  "End_Line_Symbol" : ";",
+  "Start_Rule_Symbol" : ">",
+  "Void_Symbol" : "&",
+  "Separate_Rules_Symbol" : "|",
+  "Special_Rule_Character" : "$"
+}
