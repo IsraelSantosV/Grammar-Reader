@@ -1,2 +1,2 @@
-# Grammar-Reader
-Analisador Léxico para gramáticas livre de contexto
+# Grammar Reader
+Gerador de tabelas para gramáticas livre de contexto
