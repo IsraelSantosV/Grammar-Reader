@@ -14,14 +14,17 @@ public class Syntax {
     private char VOID_SYMBOL;
     private char SEPARATE_RULES_SYMBOL;
     private char SPECIAL_RULE_CHARACTER;
+    private char EXTEND_GRAMMAR_SYMBOL;
 
     private char m_InitialGrammarToken;
+    private boolean m_GrammarIsExtended;
 
     public char getEndLineSymbol() { return END_LINE_SYMBOL; }
     public char getStartRuleSymbol() { return START_RULES_SYMBOL; }
     public char getVoidSymbol() { return VOID_SYMBOL; }
     public char getSeparateRulesSymbol() { return SEPARATE_RULES_SYMBOL; }
     public char getSpecialRuleCharacter() { return SPECIAL_RULE_CHARACTER; }
+    public char getExtendGrammarSymbol() { return EXTEND_GRAMMAR_SYMBOL; }
 
     public static class Symbol {
         public char Token;
@@ -97,12 +100,14 @@ public class Syntax {
             String voidSymbol = conf.getString("Void_Symbol");
             String separateRulesSymbol = conf.getString("Separate_Rules_Symbol");
             String specialRuleCharacter = conf.getString("Special_Rule_Character");
+            String extendGrammarSymbol = conf.getString("Extend_Grammar_Symbol");
 
             END_LINE_SYMBOL = endLineSymbol.charAt(0);
             START_RULES_SYMBOL = startLineSymbol.charAt(0);
             VOID_SYMBOL = voidSymbol.charAt(0);
             SEPARATE_RULES_SYMBOL = separateRulesSymbol.charAt(0);
             SPECIAL_RULE_CHARACTER = specialRuleCharacter.charAt(0);
+            EXTEND_GRAMMAR_SYMBOL = extendGrammarSymbol.charAt(0);
         } catch (JSONException e) {
             throw new JSONException("Error on read json definition: " + e.getMessage());
         }
@@ -134,6 +139,10 @@ public class Syntax {
                 //Receive valid language token
                 if(Character.isDigit(token)){
                     throw new IllegalArgumentException("The syntax does not allow digits!");
+                }
+
+                if(token == EXTEND_GRAMMAR_SYMBOL){
+                    m_GrammarIsExtended = true;
                 }
 
                 boolean isTerminal = token == VOID_SYMBOL || !Character.isUpperCase(token);
@@ -172,6 +181,20 @@ public class Syntax {
 
     public char getInitialToken(){
         return m_InitialGrammarToken;
+    }
+
+    public void extendGrammar(){
+        if(m_GrammarIsExtended) return;
+        Map<Symbol, List<OutputRule>> rulesCopy = new HashMap<>(m_Rules);
+
+        OutputRule newOutput = new OutputRule();
+        newOutput.Output.add(new Symbol(getInitialToken(), false));
+        List<OutputRule> newRule = new ArrayList<>();
+        newRule.add(newOutput);
+
+        rulesCopy.put(new Symbol('#', false), newRule);
+        m_Rules = rulesCopy;
+        m_GrammarIsExtended = true;
     }
 
     public void printSyntax(){
