@@ -1,18 +1,13 @@
 package com.tools;
 
-import sun.misc.IOUtils;
-
 import org.json.*;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import com.opencsv.CSVWriter;
 
 public class FileResourceUtils {
 
@@ -114,13 +109,21 @@ public class FileResourceUtils {
     }
 
     public static void writeMatrixCSV(String[] header, List<String[]> linesValues, String fileName) throws IOException {
-        Writer writer = Files.newBufferedWriter(Paths.get(fileName + ".csv"));
-        CSVWriter csvWriter = new CSVWriter(writer);
+        FileWriter writer = new FileWriter(fileName + ".csv");
 
-        csvWriter.writeNext(header);
-        csvWriter.writeAll(linesValues);
+        for (String h : header) {
+            writer.append(h);
+            writer.append(",");
+        }
 
-        csvWriter.flush();
+        writer.append("\n");
+
+        for(String[] lineData : linesValues){
+            writer.append(String.join(",", lineData));
+            writer.append("\n");
+        }
+
+        writer.flush();
         writer.close();
     }
 

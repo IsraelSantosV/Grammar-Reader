@@ -1,6 +1,5 @@
 package com.core;
 
-import com.sun.xml.internal.messaging.saaj.packaging.mime.util.OutputUtil;
 import com.tools.FileResourceUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,9 +25,11 @@ public class Syntax {
     public char getSpecialRuleCharacter() { return SPECIAL_RULE_CHARACTER; }
     public char getExtendGrammarSymbol() { return EXTEND_GRAMMAR_SYMBOL; }
 
-    public static class Symbol {
+    public static class Symbol implements Comparable<Symbol> {
         public char Token;
         public boolean IsTerminal;
+
+        public int NotTerminalIndex;
 
         public Symbol(char token, boolean isTerminal){
             Token = token;
@@ -38,6 +39,12 @@ public class Syntax {
         @Override
         public String toString() {
             return String.valueOf(Token);
+        }
+
+        @Override
+        public int compareTo(Symbol other) {
+            if(IsTerminal && other.IsTerminal) return 0;
+            return NotTerminalIndex > other.NotTerminalIndex ? 1 : -1;
         }
     }
 
@@ -114,7 +121,7 @@ public class Syntax {
     }
 
     protected void initializeSymbols(String inputStream){
-        m_Rules = new HashMap<>();
+        m_Rules = new LinkedHashMap<>();
         String validInput = inputStream.replaceAll("\\s+","");
         char[] tokens = validInput.toCharArray();
 
@@ -123,49 +130,50 @@ public class Syntax {
         Symbol currentRuleSymbol = null;
         OutputRule currentOutputRule = null;
 
-        for (char token : tokens) {
-            if(token == START_RULES_SYMBOL){
+        for (int i = 0; i < tokens.length; i++) {
+            char token = tokens[i];
+
+            if (token == START_RULES_SYMBOL) {
                 isStartRuleToken = false;
-            }
-            else if(token == END_LINE_SYMBOL){
+            } else if (token == END_LINE_SYMBOL) {
                 isStartRuleToken = true;
                 currentOutputRule = null;
                 currentRuleSymbol = null;
-            }
-            else if(token == SEPARATE_RULES_SYMBOL){
+            } else if (token == SEPARATE_RULES_SYMBOL) {
                 currentOutputRule = null;
-            }
-            else{
+            } else {
                 //Receive valid language token
-                if(Character.isDigit(token)){
+                if (Character.isDigit(token)) {
                     throw new IllegalArgumentException("The syntax does not allow digits!");
                 }
 
-                if(token == EXTEND_GRAMMAR_SYMBOL){
+                if (token == EXTEND_GRAMMAR_SYMBOL) {
                     m_GrammarIsExtended = true;
                 }
 
                 boolean isTerminal = token == VOID_SYMBOL || !Character.isUpperCase(token);
                 Symbol newSymbol = new Symbol(token, isTerminal);
 
-                if(isStartRuleToken){
+                if (!isTerminal) {
+                    newSymbol.NotTerminalIndex = i;
+                }
+
+                if (isStartRuleToken) {
                     List<OutputRule> lastRule = getOutputRule(token);
-                    if(lastRule != null){
+                    if (lastRule != null) {
                         currentOutputRule = new OutputRule();
                         lastRule.add(currentOutputRule);
-                    }
-                    else {
+                    } else {
                         m_Rules.put(newSymbol, new ArrayList<>());
                     }
 
                     isStartRuleToken = false;
                     currentRuleSymbol = newSymbol;
-                }
-                else{
-                    try{
+                } else {
+                    try {
                         if (currentRuleSymbol == null) throw new AssertionError();
                         List<OutputRule> lineTargetRules = getOutputRule(currentRuleSymbol.Token);
-                        if(currentOutputRule == null){
+                        if (currentOutputRule == null) {
                             currentOutputRule = new OutputRule();
                             lineTargetRules.add(currentOutputRule);
                         }
@@ -185,14 +193,16 @@ public class Syntax {
 
     public void extendGrammar(){
         if(m_GrammarIsExtended) return;
-        Map<Symbol, List<OutputRule>> rulesCopy = new HashMap<>(m_Rules);
+        Map<Symbol, List<OutputRule>> rulesCopy = new LinkedHashMap<>(m_Rules);
 
         OutputRule newOutput = new OutputRule();
         newOutput.Output.add(new Symbol(getInitialToken(), false));
         List<OutputRule> newRule = new ArrayList<>();
         newRule.add(newOutput);
 
-        rulesCopy.put(new Symbol('#', false), newRule);
+        rulesCopy.put(new Symbol(getExtendGrammarSymbol(), false), newRule);
+        m_InitialGrammarToken = getExtendGrammarSymbol();
+
         m_Rules = rulesCopy;
         m_GrammarIsExtended = true;
     }
@@ -285,10 +295,10 @@ public class Syntax {
         return allOccurrences;
     }
 
-    public Set<Character> getAllSymbolsOf(boolean terminals, Set<Character> list){
+    public Set<Character> getAllTerminalSymbols(Set<Character> list){
         Set<Character> resultValues = new HashSet<>();
         for (Character character : list) {
-            if(Character.isUpperCase(character) && !terminals || !Character.isUpperCase(character) && terminals){
+            if(!Character.isUpperCase(character)){
                 resultValues.add(character);
             }
         }
@@ -296,24 +306,30 @@ public class Syntax {
         return resultValues;
     }
 
-    public Set<Symbol> getAllSymbolsOf(boolean terminals){
+    public Set<Symbol> getAllTerminalSymbols(){
         Set<Symbol> resultValues = new HashSet<>();
+
+        //For each terminal
         for (Map.Entry<Symbol, List<OutputRule>> entry : m_Rules.entrySet()) {
-            if(!terminals){
-                resultValues.add(entry.getKey());
-            }
-            else {
-                for (OutputRule outputRule : entry.getValue()) {
-                    for (Symbol symbol : outputRule.Output) {
-                        if(symbol.IsTerminal && !containsTokenInSet(resultValues, symbol.Token)){
-                            resultValues.add(symbol);
-                        }
+            for (OutputRule outputRule : entry.getValue()) {
+                for (Symbol symbol : outputRule.Output) {
+                    if (symbol.IsTerminal && !containsTokenInSet(resultValues, symbol.Token)) {
+                        resultValues.add(symbol);
                     }
                 }
             }
         }
 
         return resultValues;
+    }
+
+    public List<Symbol> getAllProductionSymbols() {
+        Set<Symbol> keys = m_Rules.keySet();
+
+        //Convert set to list
+        List<Symbol> notTerminalSymbols = new ArrayList<>(keys);
+        Collections.sort(notTerminalSymbols);
+        return notTerminalSymbols;
     }
 
     public boolean containsTokenInSet(Set<Symbol> symbols, char token){

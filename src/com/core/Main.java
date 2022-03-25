@@ -11,7 +11,9 @@ public class Main {
         String input = FileResourceUtils.getInstance().getFileFromResourceAsString(INPUT_FILE);
         Syntax newSyntax = new Syntax(input);
 
-        ParserLL1 parserLL1 = new ParserLL1(newSyntax);
-        parserLL1.createTable();
+        //ParserLL1 parserLL1 = new ParserLL1(newSyntax);
+        //parserLL1.createTable();
+
+        ParserLR0 parserLR0 = new ParserLR0(newSyntax);
     }
 }

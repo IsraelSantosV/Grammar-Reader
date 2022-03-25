@@ -1,6 +1,6 @@
-" ","c","$","d","a","i","b"
-"X",,"X -> &","X -> &","X -> aTX",,
-"T","T -> FY",,,,"T -> FY",
-"F","F -> cEd",,,,"F -> i",
-"E","E -> TX",,,,"E -> TX",
-"Y",,"Y -> &","Y -> &","Y -> &",,"Y -> bFY"
+ ,i,a,c,d,b,$,
+F,F -> i,null,F -> cEd,null,null,null
+X,null,X -> aTX,null,X -> &,null,X -> &
+Y,null,Y -> &,null,Y -> &,Y -> bFY,Y -> &
+E,E -> TX,null,E -> TX,null,null,null
+T,T -> FY,null,T -> FY,null,null,null

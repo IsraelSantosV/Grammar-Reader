@@ -16,8 +16,8 @@ public abstract class Parser {
         //Calculate all firstSets and followSets
         m_FirstSets = new HashMap<>();
         m_FollowSets = new HashMap<>();
-        Set<Syntax.Symbol> terminals = m_Syntax.getAllSymbolsOf(true);
-        Set<Syntax.Symbol> notTerminals = m_Syntax.getAllSymbolsOf(false);
+        Set<Syntax.Symbol> terminals = m_Syntax.getAllTerminalSymbols();
+        List<Syntax.Symbol> notTerminals = m_Syntax.getAllProductionSymbols();
 
         terminals.forEach(this::internalSetFirstSetOf);
         notTerminals.forEach(this::internalSetFirstSetOf);

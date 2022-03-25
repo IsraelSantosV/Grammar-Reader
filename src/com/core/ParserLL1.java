@@ -13,7 +13,7 @@ public class ParserLL1 extends Parser {
 
     private String[][] m_Table;
     private Set<Syntax.Symbol> m_Terminals;
-    private Set<Syntax.Symbol> m_NotTerminals;
+    private List<Syntax.Symbol> m_NotTerminals;
 
     public ParserLL1(Syntax syntax) {
         super(syntax);
@@ -21,8 +21,8 @@ public class ParserLL1 extends Parser {
 
     @Override
     protected void initializeTable(){
-        m_NotTerminals = m_Syntax.getAllSymbolsOf(false);
-        m_Terminals = m_Syntax.getAllSymbolsOf(true);
+        m_NotTerminals = m_Syntax.getAllProductionSymbols();
+        m_Terminals = m_Syntax.getAllTerminalSymbols();
         m_Terminals.removeIf(currentSymbol -> currentSymbol.Token == m_Syntax.getVoidSymbol());
 
         //Add special syntax token
@@ -83,7 +83,7 @@ public class ParserLL1 extends Parser {
 
                 if(firstSetOfSymbol.contains(m_Syntax.getVoidSymbol())){
                     Set<Character> followSetOfRoot = getFollowSetOf(currentNotTerminal.Token);
-                    Set<Character> terminalsInRootFollowSet = m_Syntax.getAllSymbolsOf(true, followSetOfRoot);
+                    Set<Character> terminalsInRootFollowSet = m_Syntax.getAllTerminalSymbols(followSetOfRoot);
                     setTableValueWithSet(currentNotTerminal.Token, terminalsInRootFollowSet, production);
                 }
                 else {
