@@ -1,8 +1,5 @@
 {
-  "End_Line_Symbol" : ";",
-  "Start_Rule_Symbol" : ">",
-  "Void_Symbol" : "&",
-  "Separate_Rules_Symbol" : "|",
-  "Special_Rule_Character" : "$",
-  "Extend_Grammar_Symbol" : "#"
+  "EPSILON" : "epsilon",
+  "EXTEND_GRAMMAR_SYMBOL" : "S'",
+  "ROOT_GRAMMAR_SYMBOL" : "$"
 }

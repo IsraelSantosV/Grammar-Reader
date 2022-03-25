@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.text.Font?>
+<GridPane alignment="center" hgap="10" vgap="10" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="com.core.gui.GrammarInputController">
+    <columnConstraints>
+        <ColumnConstraints />
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints />
+    </rowConstraints>
+
+    <children>
+        <AnchorPane prefHeight="560.0" prefWidth="690.0" style="-fx-background-color: &quot;000000&quot;;">
+            <children>
+                <ComboBox fx:id="m_ParserDropdown" style="-fx-background-color: &quot;7f7f7f&quot;;"
+                          layoutX="490.0" layoutY="30.0" prefHeight="25.0" promptText="Parser" />
+                <Label fx:id="m_TitleText" layoutX="70.0" layoutY="80.0" textFill="purple">
+                    <font>
+                        <Font name="System Bold" size="13.0" />
+                    </font>
+                </Label>
+
+                <Label fx:id="m_InfoBox1" layoutX="103.0" layoutY="166.0" textFill="white"/>
+                <Label fx:id="m_InfoBox2" layoutX="103.0" layoutY="246.0" textFill="white"/>
+                <Label fx:id="m_InfoBox3" layoutX="102.0" layoutY="219.0" textFill="white"/>
+                <Label fx:id="m_InfoBox4" layoutX="102.0" layoutY="115.0" textFill="white"/>
+                <Label fx:id="m_InfoBox5" layoutX="102.0" layoutY="192.0" textFill="white"/>
+
+                <TextArea fx:id="m_GrammarInput" style="-fx-background-color: &quot;7f7f7f&quot;;" layoutX="70.0"
+                          layoutY="277.0" prefHeight="200.0" prefWidth="533.0" />
+
+                <Label fx:id="m_InfoBoxError" layoutX="102.0" layoutY="139.0" textFill="darkred"/>
+                <Button style="-fx-background-color: &quot;760d62&quot;;" layoutX="70.0" layoutY="500.0" mnemonicParsing="false"
+                        onAction="#onTriggerStart" text="Start" textFill="black" prefWidth="200.0" />
+
+                <Label fx:id="m_ErrorLabel" layoutX="167.0" layoutY="505.0" text="error" textFill="darkred" />
+            </children>
+        </AnchorPane>
+    </children>
+</GridPane>

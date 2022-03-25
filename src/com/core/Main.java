@@ -1,19 +1,26 @@
 package com.core;
 
 import com.tools.FileResourceUtils;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
-public class Main {
+import java.util.Objects;
 
-    public static final String INPUT_FILE = "Input.txt";
+public class Main extends Application {
+
+    public static final String TRANSLATION_FILE = "Translation.json";
     public static final String SYNTAX_DEFINITIONS_FILE = "SyntaxDefinitions.json";
 
-    public static void main(String[] args) {
-        String input = FileResourceUtils.getInstance().getFileFromResourceAsString(INPUT_FILE);
-        Syntax newSyntax = new Syntax(input);
+    public static void main(String[] args) { launch(args); }
 
-        //ParserLL1 parserLL1 = new ParserLL1(newSyntax);
-        //parserLL1.createTable();
-
-        ParserLR0 parserLR0 = new ParserLR0(newSyntax);
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/com/core/gui/GrammarInput.fxml")));
+        primaryStage.setTitle(FileResourceUtils.readJson(TRANSLATION_FILE).getString("APPLICATION_NAME"));
+        primaryStage.setScene(new Scene(root));
+        primaryStage.show();
     }
 }

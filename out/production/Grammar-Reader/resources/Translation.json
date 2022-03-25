@@ -1,0 +1,13 @@
+{
+  "APPLICATION_NAME" : "GRAMMAR PARSER",
+  "ERROR_SELECT_PARSER" : "SELECIONE UM PARSER!",
+  "ERROR_ON_PARSE" : "The grammar can not be parsed, choose a different parser or grammar!",
+  "INFO_TITLE" : "LEIA ANTES DE GERAR UMA GRAMÁTICA :",
+  "INFO_BOX_1" : "",
+  "INFO_BOX_2" : "",
+  "INFO_BOX_3" : "",
+  "INFO_BOX_4" : "",
+  "INFO_BOX_5" : "",
+  "INFO_BOX_ERROR" : "",
+  "GRAMMAR_INPUT_PROMPT" : ""
+}
