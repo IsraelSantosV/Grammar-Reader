@@ -2,8 +2,8 @@ package com.core.parsers.util;
 
 public class Action {
 
-    private ActionType m_Type;
-    private int m_Operand;
+    private final ActionType m_Type;
+    private final int m_Operand;
 
     public Action(ActionType type, int operand){
         m_Type = type;

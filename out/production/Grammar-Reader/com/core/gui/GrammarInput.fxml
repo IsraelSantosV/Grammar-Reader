@@ -21,7 +21,7 @@
             <children>
                 <ComboBox fx:id="m_ParserDropdown" style="-fx-background-color: &quot;7f7f7f&quot;;"
                           layoutX="490.0" layoutY="30.0" prefHeight="25.0" promptText="Parser" />
-                <Label fx:id="m_TitleText" layoutX="70.0" layoutY="80.0" textFill="purple">
+                <Label fx:id="m_TitleText" layoutX="70.0" layoutY="80.0" textFill="cornflowerblue">
                     <font>
                         <Font name="System Bold" size="13.0" />
                     </font>
@@ -33,14 +33,15 @@
                 <Label fx:id="m_InfoBox4" layoutX="102.0" layoutY="115.0" textFill="white"/>
                 <Label fx:id="m_InfoBox5" layoutX="102.0" layoutY="192.0" textFill="white"/>
 
-                <TextArea fx:id="m_GrammarInput" style="-fx-background-color: &quot;7f7f7f&quot;;" layoutX="70.0"
-                          layoutY="277.0" prefHeight="200.0" prefWidth="533.0" />
+                <TextArea fx:id="m_GrammarInput" style="-fx-control-inner-background: &quot;2b2b2b&quot;;
+                -fx-prompt-text-fill: &quot;dbd9d9&quot;;" layoutX="70.0" layoutY="277.0" prefHeight="200.0" prefWidth="533.0" />
 
                 <Label fx:id="m_InfoBoxError" layoutX="102.0" layoutY="139.0" textFill="darkred"/>
-                <Button style="-fx-background-color: &quot;760d62&quot;;" layoutX="70.0" layoutY="500.0" mnemonicParsing="false"
+                <Button style="-fx-background-color: cornflowerblue;" layoutX="70.0" layoutY="500.0" mnemonicParsing="false"
                         onAction="#onTriggerStart" text="Start" textFill="black" prefWidth="200.0" />
 
-                <Label fx:id="m_ErrorLabel" layoutX="167.0" layoutY="505.0" text="error" textFill="darkred" />
+                <Label fx:id="m_ErrorLabel" layoutX="280.0" layoutY="505.0" text="error" textFill="darkred" />
+                <Label fx:id="Copyright" layoutX="20.0" layoutY="20" textFill="brown"/>
             </children>
         </AnchorPane>
     </children>

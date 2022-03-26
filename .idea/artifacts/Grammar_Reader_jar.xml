@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Grammar-Reader:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Grammar_Reader_jar</output-path>
+    <root id="archive" name="Grammar-Reader.jar">
+      <element id="module-output" name="Grammar-Reader" />
+      <element id="library" level="project" name="opencsv-5.6" />
+    </root>
+  </artifact>
+</component>

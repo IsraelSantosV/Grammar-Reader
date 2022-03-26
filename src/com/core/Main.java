@@ -20,7 +20,9 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/com/core/gui/GrammarInput.fxml")));
         primaryStage.setTitle(FileResourceUtils.readJson(TRANSLATION_FILE).getString("APPLICATION_NAME"));
-        primaryStage.setScene(new Scene(root));
+
+        Scene firstScene = new Scene(root);
+        primaryStage.setScene(firstScene);
         primaryStage.show();
     }
 }

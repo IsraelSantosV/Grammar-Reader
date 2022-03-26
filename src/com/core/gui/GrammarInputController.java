@@ -2,8 +2,9 @@ package com.core.gui;
 
 import com.core.Grammar;
 import com.core.Main;
-import com.core.parsers.ParserLR0;
-import com.core.parsers.ParserLR1;
+import com.core.parsers.LR0.ParserLR0;
+import com.core.parsers.LR1.ParserLR1;
+import com.core.parsers.ParserLL1;
 import com.tools.FileResourceUtils;
 
 import javafx.collections.FXCollections;
@@ -52,15 +53,19 @@ public class GrammarInputController implements Initializable {
     private Label m_InfoBox5;
     @FXML
     private Label m_InfoBoxError;
+    @FXML
+    public Label Copyright;
 
     private JSONObject m_Translation;
 
     private static String m_SelectedParser;
+    private static ParserLL1 m_ParserLL1;
     private static ParserLR0 m_ParserLR0;
     private static ParserLR1 m_ParserLR1;
 
     public static String getSelectedParser() { return m_SelectedParser; }
     public static ParserLR0 getCurrentParserLR0() { return m_ParserLR0; }
+    public static ParserLL1 getCurrentParserLL1() { return m_ParserLL1; }
     public static ParserLR1 getCurrentParserLR1() { return m_ParserLR1; }
 
     @Override
@@ -75,6 +80,7 @@ public class GrammarInputController implements Initializable {
         m_InfoBox4.setText(m_Translation.getString("INFO_BOX_4"));
         m_InfoBox5.setText(m_Translation.getString("INFO_BOX_5"));
         m_InfoBoxError.setText(m_Translation.getString("INFO_BOX_ERROR"));
+        Copyright.setText("* Developed by: Israel Santos Vieira");
 
         m_GrammarInput.setPromptText(m_Translation.getString("GRAMMAR_INPUT_PROMPT"));
 
@@ -99,7 +105,11 @@ public class GrammarInputController implements Initializable {
             Grammar grammar = new Grammar(grammarText, requireExtendGrammar);
 
             boolean canBeParse = true;
-            if(m_SelectedParser.equals("LR(0)") || m_SelectedParser.equals("SLR(1)")){
+            if(m_SelectedParser.equals("LL(1)")){
+                m_ParserLL1 = new ParserLL1(grammar);
+                canBeParse = m_ParserLL1.parserLL1();
+            }
+            else if(m_SelectedParser.equals("LR(0)") || m_SelectedParser.equals("SLR(1)")){
                 m_ParserLR0 = new ParserLR0(grammar);
                 if(m_SelectedParser.equals("LR(0)")){
                     canBeParse = m_ParserLR0.parserLR0();

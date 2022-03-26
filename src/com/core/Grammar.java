@@ -18,6 +18,8 @@ public class Grammar {
     private String m_ExtendedGrammarSymbol;
     private final JSONObject m_Definitions;
 
+    public static String Epsilon;
+
     public Grammar(String grammarText, boolean extendGrammar){
         m_Productions = new ArrayList<>();
         m_Terminals = new HashSet<>();
@@ -29,8 +31,10 @@ public class Grammar {
             m_ExtendedGrammarSymbol = m_Definitions.getString("EXTEND_GRAMMAR_SYMBOL");
         }
 
+        Epsilon = m_Definitions.getString("EPSILON");
+
         int currentLine = 0;
-        for(String value : grammarText.split(",")){
+        for(String value : grammarText.split("\n")){
             String[] sides = value.split("->");
             String rootSymbol = sides[0].trim();
             String[] productions = sides[1].trim().split("\\|");
@@ -224,6 +228,16 @@ public class Grammar {
         return str.toString();
     }
 
+    public int findProductionIndex(Production production){
+        for(int i = 0; i < m_Productions.size(); i++){
+            if(m_Productions.get(i).equals(production)){
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
     public boolean isVariable(String variable) { return m_Variables.contains(variable); }
 
     public HashMap<String, HashSet<String>> getFirstSets() { return m_FirstSets; }
@@ -235,5 +249,9 @@ public class Grammar {
     public HashSet<String> getVariables() { return m_Variables; }
 
     public List<Production> getProductions() { return m_Productions; }
+
+    public String getDefinition(String key){
+        return m_Definitions.getString(key);
+    }
 
 }
