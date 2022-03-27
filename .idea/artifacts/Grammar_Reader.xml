@@ -1,0 +1,20 @@
+<component name="ArtifactManager">
+  <artifact type="javafx" build-on-make="true" name="Grammar-Reader">
+    <output-path>$PROJECT_DIR$/out/artifacts/Grammar_Reader</output-path>
+    <properties id="javafx-properties">
+      <options>
+        <option name="appClass" value="com.core.Main" />
+        <option name="description" value="" />
+        <option name="htmlPlaceholderId" value="" />
+        <option name="title" value="" />
+        <option name="vendor" value="" />
+        <option name="version" value="1.0.0" />
+      </options>
+    </properties>
+    <root id="root">
+      <element id="archive" name="Grammar_Reader.jar">
+        <element id="module-output" name="Grammar-Reader" />
+      </element>
+    </root>
+  </artifact>
+</component>
